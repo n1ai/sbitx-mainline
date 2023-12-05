@@ -25,6 +25,7 @@ CW/RTTY/PSK31/SSB and FT8 with logging software, macros, spotting built-in.
 * sBitx Digital [[PDF](https://github.com/afarhan/sbitx/blob/main/doc/pdf/sbitx_digital.pdf)]
 * sBitx Main [[PDF](https://github.com/afarhan/sbitx/blob/main/doc/pdf/sbitx_main.pdf)]
 * sBitx v2 Circuit [[PDF](https://github.com/afarhan/sbitx/blob/main/doc/pdf/sbitxv2_circuit.pdf)]
+* sBitx v3 Circuit [[PDF](https://github.com/afarhan/sbitx/blob/main/doc/pdf/sbitx_v3_production.pdf)]
 
 ## Community mailing list
 https://groups.io/g/bitx20
