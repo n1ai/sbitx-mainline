@@ -3864,7 +3864,7 @@ void ui_init(int argc, char *argv[]){
   gtk_window_set_default_size(GTK_WINDOW(window), 800, 480);
   //gtk_window_set_default_size(GTK_WINDOW(window), screen_width, screen_height);
   gtk_window_set_title( GTK_WINDOW(window), "sBITX" );
-	gtk_window_set_icon_from_file(GTK_WINDOW(window), "/home/pi/sbitx/sbitx_icon.png", NULL);
+	gtk_window_set_icon_from_file(GTK_WINDOW(window), "/home/pi/sbitx/data/sbitx_icon.png", NULL);
 
   display_area = gtk_drawing_area_new();
 	gtk_widget_set_size_request(display_area, 500, 400);
