@@ -1,0 +1,14 @@
+{
+  "files.associations": {
+    "*.c": "c",
+    "*.h": "c",
+    "fields.h": "c",
+    "typeinfo": "c"
+},
+  "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools",
+  "cmake.configureOnOpen": true,
+  "cmake.preferredGenerators": [
+    "ninja"
+  ],
+  "editor.detectIndentation": false
+}
