@@ -277,10 +277,10 @@ int main(int argc, char** argv)
 		fread(signal, num_samples, sizeof(int16_t), pf);
 		fclose(pf);
 
-    if (rc < 0)
-    {
-        return -1;
-    }
+    // if (rc < 0)
+    // {
+    //     return -1;
+    // }
 
     LOG(LOG_INFO, "Sample rate %d Hz, %d samples, %.3f seconds\n", sample_rate, num_samples, (double)num_samples / sample_rate);
 
