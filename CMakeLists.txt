@@ -1,8 +1,6 @@
 cmake_minimum_required(VERSION 3.0.0)
 project(sBitx VERSION 0.1.0)
 
-add_compile_definitions(N8ME)
-
 add_subdirectory(ft8_lib)
 
 # Add GTK3+
