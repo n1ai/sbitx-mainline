@@ -7,6 +7,11 @@ add_subdirectory(ft8_lib)
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(GTK3 REQUIRED gtk+-3.0)
 
+# Add FFTW
+pkg_search_module(FFTW REQUIRED fftw3 IMPORTED_TARGET)
+include_directories(PkgConfig::FFTW)
+link_libraries(PkgConfig::FFTW)
+
 # Setup CMake to use GTK+, tell the compiler where to look for headers
 # and to the linker where to look for libraries
 include_directories(${GTK3_INCLUDE_DIRS})
