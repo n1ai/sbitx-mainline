@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <alsa/asoundlib.h>
 #include <pthread.h>
+#include <sys/prctl.h>
 #include <complex.h>
 #include <fftw3.h>
 #include <time.h>
@@ -767,6 +768,8 @@ void *sound_thread_function(void *ptr){
 	char *device = (char *)ptr;
 	struct sched_param sch;
 
+	prctl(PR_SET_NAME, "sbitx_sound_th", 0, 0);
+
 	//switch to maximum priority
 	sch.sched_priority = sched_get_priority_max(SCHED_FIFO);
 	pthread_setschedparam(sound_thread, SCHED_FIFO, &sch);
@@ -800,6 +803,8 @@ void *sound_thread_function(void *ptr){
 
 void *loopback_thread_function(void *ptr){
 	struct sched_param sch;
+
+	prctl(PR_SET_NAME, "sbitx_loopbk_th", 0, 0);
 
 	//switch to maximum priority
 	sch.sched_priority = sched_get_priority_max(SCHED_FIFO);
