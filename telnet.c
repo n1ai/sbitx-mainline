@@ -17,6 +17,7 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <pthread.h>
+#include <sys/prctl.h>
 #include "sdr_ui.h"
 
 void telnet_open(char *server);
@@ -123,6 +124,8 @@ void *telnet_thread_function(void *server){
   socklen_t addr_size;
 	struct sockaddr_in serverAddr;
 	char buff[200], host[100], port[7];
+
+	prctl(PR_SET_NAME, "sbitx_telnet_th", 0, 0);
 
 	if (strlen(server) > sizeof(host) - 1)
 		return NULL;

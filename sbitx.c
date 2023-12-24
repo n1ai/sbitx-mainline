@@ -14,6 +14,7 @@
 #include <time.h>
 #include <signal.h>
 #include <pthread.h>
+#include <sys/prctl.h>
 #include <errno.h>
 #include "sdr.h"
 #include "sdr_ui.h"
@@ -1010,6 +1011,8 @@ void *calibration_thread_function(void *server){
 	int old_freq = freq_hdr;
 	int old_mode = tx_list->mode;
 	int	old_tx_drive = tx_drive;
+    
+	prctl(PR_SET_NAME, "sbitx_calibr_th", 0, 0);
 
 	in_calibration = 1;
 	for (int i = 0; i < sizeof(band_power)/sizeof(struct power_settings); i++){

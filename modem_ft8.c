@@ -10,6 +10,7 @@
 #include <complex.h>
 #include <fftw3.h>
 #include <pthread.h>
+#include <sys/prctl.h>
 #include <unistd.h>
 #include "sdr.h"
 #include "sdr_ui.h"
@@ -592,6 +593,8 @@ void ft8_tx(char *message, int freq){
 void *ft8_thread_function(void *ptr){
 	FILE *pf;
 	char buff[1000], mycallsign_upper[20]; //there are many ways to crash sbitx, bufferoverflow of callsigns is 1
+
+	prctl(PR_SET_NAME, "sbitx_ft8_th", 0, 0);
 
 	//wake up every 100 msec to see if there is anything to decode
 	while(1){

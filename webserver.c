@@ -3,6 +3,7 @@
 #include "mongoose.h"
 #include "webserver.h"
 #include <pthread.h>
+#include <sys/prctl.h>
 #include <math.h>
 #include <complex.h>
 #include <fftw3.h>
@@ -215,6 +216,7 @@ static void fn(struct mg_connection *c, int ev, void *ev_data, void *fn_data) {
 }
 
 void *webserver_thread_function(void *server){
+  prctl(PR_SET_NAME, "sbitx_websrv_th", 0, 0);
   mg_mgr_init(&mgr);  // Initialise event manager
   mg_http_listen(&mgr, s_listen_on, fn, NULL);  // Create HTTP listener
   for (;;) mg_mgr_poll(&mgr, 1000);             // Infinite event loop
