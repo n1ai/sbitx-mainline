@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 3.0.0)
 project(sBitx VERSION 0.1.0)
 
+# Set build type to release with debug info to match current sbitx practice
+set(CMAKE_BUILD_TYPE RelWithDebInfo)
+
 add_subdirectory(ft8_lib)
 
 # Add GTK3+
