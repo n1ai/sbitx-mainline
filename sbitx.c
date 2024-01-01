@@ -23,6 +23,7 @@
 #include "i2cbb.h"
 #include "si5351.h"
 #include "ini.h"
+int set_field(char *, char *);  // This should be moved to a .h file
 
 #define DEBUG 0
 
@@ -54,6 +55,9 @@ fftw_plan plan_spectrum;
 float spectrum_window[MAX_BINS];
 void set_rx1(int frequency);
 void tr_switch(int tx_on);
+float min_fft_level;
+int rx_gain_slow_count;
+int rx_gain_changed = 0;	// Flag to indicate a change in rx_gain has been called for
 
 // Wisdom Defines for the FFTW and FFTWF libraries
 // Options for WISDOM_MODE from least to most rigorous are FFTW_ESTIMATE, FFTW_MEASURE, FFTW_PATIENT, and FFTW_EXHAUSTIVE
@@ -598,6 +602,67 @@ void rx_process(int32_t *input_rx,  int32_t *input_mic,
 	// the spectrum display is updated
 	spectrum_update();
 
+	// Make adjustments to IF Gain
+	min_fft_level = 10000;
+	for(i=1269; i<1803; i++)
+	{
+		if (fft_bins[i] < min_fft_level)
+		{
+			min_fft_level = fft_bins[i];
+		}
+	}
+	//printf("%f\n", min_fft_level);
+	// Fast IF Gain Compensation Loop
+
+#define TARGET_FFT_LEVEL 0.015	
+#define FAST_MIN_FFT_LEVEL 0.008
+#define FAST_MAX_FFT_LEVEL 0.03
+	
+	if ((min_fft_level < FAST_MIN_FFT_LEVEL) || (min_fft_level > FAST_MAX_FFT_LEVEL))
+	{
+		rx_gain_slow_count = 0;
+		if (min_fft_level < .008)
+		{
+			rx_gain += 10;
+			rx_gain_changed = 1;
+			// printf("F_U ");
+		}
+		else
+		{
+			rx_gain -= 10;
+			rx_gain_changed = 1;			
+			// printf("F_D ");
+		}
+	}
+	else
+	{
+		rx_gain_slow_count++;				// Only make fine adjustments to rx_gain every second.
+		if (rx_gain_slow_count > 104)
+		{
+			rx_gain_slow_count = 0;			
+			if (min_fft_level < TARGET_FFT_LEVEL)
+			{
+					rx_gain += 1;
+					rx_gain_changed = 1;
+					// printf("S_U ");		
+			}
+			else
+			{
+					rx_gain -= 1;
+					rx_gain_changed = 1;
+					// printf("S_D ");		
+			}
+		}
+	}
+	// printf("%d\n", rx_gain);	
+	if((!in_tx) && rx_gain_changed == 1)
+	{
+			sound_mixer(audio_card, "Capture", rx_gain);
+			char rx_gain_buff[8];
+			(void) sprintf(rx_gain_buff, "%d", rx_gain);
+			set_field("r1:gain", rx_gain_buff);
+			rx_gain_changed = 0;
+	}	
 
 	// ... back to the actual processing, after spectrum update  
 
@@ -1360,9 +1425,11 @@ void sdr_request(char *request, char *response){
 	}
 	else if (!strcmp(cmd, "tx")){
 		if (!strcmp(value, "on"))
-			tr_switch_v2(1);
+			// tr_switch_v2(1);	// Gordon's Mod N3SB
+			tr_switch(1);	// Gordon's Mod
 		else
-			tr_switch_v2(0);
+			// tr_switch_v2(0);	// Gordon's Mod N3SB
+			tr_switch(0);	// Gordon's Mod
 		strcpy(response, "ok");
 	}
 	else if (!strcmp(cmd, "rx_pitch")){
