@@ -1295,7 +1295,7 @@ static void save_user_settings(int forced){
 	//attempt to save settings only if it has been 30 seconds since the 
 	//last time the settings were saved
 	int now = millis();
-	if ((now < last_save_at + 30000 ||  !settings_updated) && forced == 0)
+	if ((now < last_save_at + 30000 || !settings_updated) && forced == 0)
 		return;
 
 	char *path = getenv("HOME");
@@ -1328,6 +1328,7 @@ static void save_user_settings(int forced){
 
 
 	fclose(f);
+	last_save_at = now;	// As proposed by Dave N1AI
 	settings_updated = 0;
 }
 
@@ -1374,9 +1375,9 @@ static int user_settings_handler(void* user, const char* section,
       strcpy(cmd, name);
       set_field(cmd, new_value);
     }
-		else if (!strncmp(cmd, "#kbd", 4)){
-			return 1; //skip the keyboard values
-		}
+	else if (!strncmp(section, "#kbd", 4)){
+		return 1; //skip the keyboard values
+	}
     // if it is an empty section
     else if (strlen(section) == 0){
       sprintf(cmd, "%s", name);
