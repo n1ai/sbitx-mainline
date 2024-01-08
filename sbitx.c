@@ -16,6 +16,7 @@
 #include <pthread.h>
 #include <sys/prctl.h>
 #include <errno.h>
+#include <limits.h>
 #include "sdr.h"
 #include "sdr_ui.h"
 #include "sound.h"
@@ -61,7 +62,7 @@ void tr_switch(int tx_on);
 // if the Wisdom plans in the file were generated at the same or more rigorous level.
 #define WISDOM_MODE FFTW_MEASURE
 #define PLANTIME -1		// spend no more than plantime seconds finding the best FFT algorithm. -1 turns the platime cap off.
-char wisdom_file[] = "sbitx_wisdom.wis";
+char wisdom_file[PATH_MAX];
 
 fftw_complex *fft_out;		// holds the incoming samples in freq domain (for rx as well as tx)
 fftw_complex *fft_in;			// holds the incoming samples in time domain (for rx as well as tx) 
@@ -161,10 +162,14 @@ void fft_init(){
 
 	fftw_set_timelimit(PLANTIME);
 	fftwf_set_timelimit(PLANTIME);
+	if (wisdom_file[0] == '\0') {
+	  char *path = getenv("HOME");
+	  strcpy(wisdom_file, path);
+	  strcat(wisdom_file, "/sbitx/data/fft_wisdom_d.wis");
+	}
 	int e = fftw_import_wisdom_from_filename(wisdom_file);
-	if (e == 0)
-	{
-		printf("Generating Wisdom File...\n");
+	if (e == 0) {
+	  printf("Generating Double-Precision Wisdom File..\n");
 	}
 	plan_fwd = fftw_plan_dft_1d(MAX_BINS, fft_in, fft_out, FFTW_FORWARD, WISDOM_MODE); // Was FFTW_ESTIMATE N3SB
 	plan_spectrum = fftw_plan_dft_1d(MAX_BINS, fft_in, fft_spectrum, FFTW_FORWARD, WISDOM_MODE); // Was FFTW_ESTIMATE N3SB

@@ -9,6 +9,7 @@
 #include <fcntl.h>
 #include <sys/mman.h>
 #include <unistd.h>
+#include <limits.h>
 #include "sdr.h"
 
 // Wisdom Defines for the FFTW and FFTWF libraries
@@ -18,7 +19,7 @@
 // if the Wisdom plans in the file were generated at the same or more rigorous level.
 #define WISDOM_MODE FFTW_MEASURE
 #define PLANTIME -1		// spend no more than plantime seconds finding the best FFT algorithm. -1 turns the platime cap off.
-char wisdom_file_f[] = "sbitx_wisdom_f.wis";
+char wisdom_file_f[PATH_MAX];
 
 // Modified Bessel function of the 0th kind, used by the Kaiser window
 const float i0(float const z){
@@ -98,10 +99,14 @@ int window_filter(int const L,int const M,complex float * const response,float c
 
   fftw_set_timelimit(PLANTIME);
   fftwf_set_timelimit(PLANTIME);
+  if (wisdom_file_f[0] == '\0') {
+    char *path = getenv("HOME");
+    strcpy(wisdom_file_f, path);
+    strcat(wisdom_file_f, "/sbitx/data/fft_wisdom_f.wis");
+  }
   int e = fftwf_import_wisdom_from_filename(wisdom_file_f);
-  if (e == 0)
-  {
-    printf("Generating Wisdom File...\n");
+  if (e == 0) {
+    printf("Generating Single-Precision Wisdom File...\n");
   }
   fftwf_plan fwd_filter_plan = fftwf_plan_dft_1d(N,buffer,buffer,FFTW_FORWARD, WISDOM_MODE); // Was FFTW_ESTIMATE N3SB
   fftwf_plan rev_filter_plan = fftwf_plan_dft_1d(N,buffer,buffer,FFTW_BACKWARD, WISDOM_MODE); // Was FFTW_ESTIMATE N3SB
@@ -109,7 +114,7 @@ int window_filter(int const L,int const M,complex float * const response,float c
 
   // Convert to time domain
   memcpy(buffer,response,N*sizeof(*buffer));
-  fftwf_execute(rev_filter_plan);
+  fftwf_execute(rev_filter_plan); 
   fftwf_destroy_plan(rev_filter_plan);
 
   float kaiser_window[M];
