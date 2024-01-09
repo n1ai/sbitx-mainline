@@ -173,7 +173,7 @@ void fft_init(){
 	}
 	int e = fftw_import_wisdom_from_filename(wisdom_file);
 	if (e == 0) {
-	  printf("Generating Double-Precision Wisdom File..\n");
+	  printf("Generating Double-Precision Wisdom File (1)..\n");
 	}
 	plan_fwd = fftw_plan_dft_1d(MAX_BINS, fft_in, fft_out, FFTW_FORWARD, WISDOM_MODE); // Was FFTW_ESTIMATE N3SB
 	plan_spectrum = fftw_plan_dft_1d(MAX_BINS, fft_in, fft_spectrum, FFTW_FORWARD, WISDOM_MODE); // Was FFTW_ESTIMATE N3SB
@@ -399,9 +399,8 @@ struct rx *add_tx(int frequency, short mode, int bpf_low, int bpf_high){
 	r->fft_freq = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * MAX_BINS);
 	
 	int e = fftw_import_wisdom_from_filename(wisdom_file);
-	if (e == 0)
-	{
-		printf("Generating Wisdom File...\n");
+	if (e == 0) {
+	  printf("Generating Double-Precision Wisdom File (2)..\n");
 	}	
 	r->plan_rev = fftw_plan_dft_1d(MAX_BINS, r->fft_freq, r->fft_time, FFTW_BACKWARD, WISDOM_MODE); // Was FFTW_ESTIMATE N3SB
 	fftw_export_wisdom_to_filename(wisdom_file);
@@ -447,9 +446,8 @@ struct rx *add_rx(int frequency, short mode, int bpf_low, int bpf_high){
 	r->fft_freq = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * MAX_BINS);
 	
 	int e = fftw_import_wisdom_from_filename(wisdom_file);
-	if (e == 0)
-	{
-		printf("Generating Wisdom File...\n");
+	if (e == 0) {
+	  printf("Generating Double-Precision Wisdom File (3)..\n");
 	}	
 	r->plan_rev = fftw_plan_dft_1d(MAX_BINS, r->fft_freq, r->fft_time, FFTW_BACKWARD, WISDOM_MODE);  // Was FFTW_ESTIMATE N3SB
 	fftw_export_wisdom_to_filename(wisdom_file);
