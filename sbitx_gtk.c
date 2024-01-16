@@ -3416,7 +3416,7 @@ int key_poll(){
 			key |= CW_DOT;
 	}
 	//straight key
-	else if (digitalRead(DASH) == LOW)
+	else if (digitalRead(PTT) == LOW || digitalRead(DASH) == LOW)
 			key = CW_DOWN;
 
 	//printf("key %d\n", key);
@@ -3831,9 +3831,9 @@ gboolean ui_tick(gpointer gook){
 	//straight key in CW
 	if (f && (!strcmp(f->value, "2TONE") || !strcmp(f->value, "LSB") || 
 	!strcmp(f->value, "USB"))){
-		if (digitalRead(DASH) == LOW && in_tx == 0)
+		if (digitalRead(PTT) == LOW && in_tx == 0)
 			tx_on(TX_PTT);
-		else if (digitalRead(DASH) == HIGH && in_tx  == TX_PTT)
+		else if (digitalRead(PTT) == HIGH && in_tx  == TX_PTT)
 			tx_off();
 	}
 
